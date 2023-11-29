@@ -1,0 +1,76 @@
+{
+  "name": "vs-summary",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "vs-summary/src",
+  "projectType": "application",
+  "targets": {
+    "type": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm exec node-api-dotnet-generator --assembly dist/summary-watch/net8.0/SummaryIdeExtensions.SummaryWatch.dll --typedefs SummaryWatch.d.ts"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/vs-summary",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "vs-summary/src/main.ts",
+        "tsConfig": "vs-summary/tsconfig.app.json",
+        "assets": ["vs-summary/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "vs-summary:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "vs-summary:build:development"
+        },
+        "production": {
+          "buildTarget": "vs-summary:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["vs-summary/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "vs-summary/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}
